@@ -1,4 +1,4 @@
-﻿<Window xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit"  x:Class="ListBoxDragAndDrop.MainWindow"
+<Window xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit"  x:Class="ListBoxDragAndDrop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="250" Width="500" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" Loaded="MainWindow_Loaded">
