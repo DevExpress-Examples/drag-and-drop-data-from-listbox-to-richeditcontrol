@@ -1,3 +1,11 @@
+<!-- default file list -->
+*Files to look at*:
+
+* [Customer.cs](./CS/ListBoxDragAndDrop/Customer.cs) (VB: [Customer.vb](./VB/ListBoxDragAndDrop/Customer.vb))
+* [Helpers.cs](./CS/ListBoxDragAndDrop/Helpers.cs) (VB: [Helpers.vb](./VB/ListBoxDragAndDrop/Helpers.vb))
+* [MainWindow.xaml](./CS/ListBoxDragAndDrop/MainWindow.xaml) (VB: [MainWindow.xaml](./VB/ListBoxDragAndDrop/MainWindow.xaml))
+* [MainWindow.xaml.cs](./CS/ListBoxDragAndDrop/MainWindow.xaml.cs) (VB: [MainWindow.xaml](./VB/ListBoxDragAndDrop/MainWindow.xaml))
+<!-- default file list end -->
 # How to drag-and-drop data from ListBox to RichEditControl
 
 
