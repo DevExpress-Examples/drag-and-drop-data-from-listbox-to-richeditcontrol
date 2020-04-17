@@ -16,6 +16,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Core.Native;
 using DevExpress.Office.Utils;
 using DevExpress.XtraRichEdit.API.Native;
+using DevExpress.Portable;
 
 namespace ListBoxDragAndDrop {
     public partial class MainWindow : Window {
@@ -28,7 +29,7 @@ namespace ListBoxDragAndDrop {
         }
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-            richEditControl1.Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
+            richEditControl1.Views.SimpleView.Padding = new PortablePadding(0);
             listBoxEdit1.ItemsSource = DataHelper.GenerateCustomers();
         }
 
