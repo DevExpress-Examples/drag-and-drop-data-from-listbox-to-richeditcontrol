@@ -1,4 +1,4 @@
-' Developer Express Code Central Example:
+﻿' Developer Express Code Central Example:
 ' How to do drag and drop items from one ListBoxEdit to another
 ' 
 ' This example shows how to implement the drag-and-drop functionality for
@@ -34,8 +34,6 @@
 ' You can find sample updates and versions for different programming languages here:
 ' http://www.devexpress.com/example=E3122
 
-
-Imports Microsoft.VisualBasic
 Imports System.Reflection
 Imports System.Resources
 Imports System.Runtime.CompilerServices
@@ -50,7 +48,7 @@ Imports System.Windows
 <Assembly: AssemblyConfiguration("")>
 <Assembly: AssemblyCompany("Microsoft")>
 <Assembly: AssemblyProduct("ListBoxDragAndDrop")>
-<Assembly: AssemblyCopyright("Copyright � Microsoft 2011")>
+<Assembly: AssemblyCopyright("Copyright © Microsoft 2011")>
 <Assembly: AssemblyTrademark("")>
 <Assembly: AssemblyCulture("")>
 
@@ -69,10 +67,6 @@ Imports System.Windows
 '[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
 
-	'(used if a resource is not found in the page, 
-	' or application resource dictionaries)
-	'(used if a resource is not found in the page, 
-	' app, or any theme specific resource dictionaries)
 <Assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)>
 
 
