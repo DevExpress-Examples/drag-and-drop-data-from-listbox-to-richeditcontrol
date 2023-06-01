@@ -23,11 +23,14 @@ namespace ListBoxDragAndDrop {
 
         bool isDragStarted;
         private Rectangle rectangle;
-
+        Canvas surface = null;
         public MainWindow() {
             InitializeComponent();
         }
-
+        private void richEditControl1_Loaded(object sender, RoutedEventArgs e)
+        {
+            surface = richEditControl1.Template.FindName("Surface", richEditControl1) as Canvas;
+        }
         void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             richEditControl1.Views.SimpleView.Padding = new PortablePadding(0);
             listBoxEdit1.ItemsSource = DataHelper.GenerateCustomers();
@@ -93,12 +96,12 @@ namespace ListBoxDragAndDrop {
             richEditControl1.Document.InsertText(
                 richEditControl1.Document.CaretPosition, item.FirstName + " " + item.LastName);
 
-            canvas.Children.Remove(rectangle);
+            surface.Children.Remove(rectangle);
         }
 
         public void DrawRectange(DocumentPosition pos) {
-            if (canvas.Children.Contains(rectangle))
-                canvas.Children.Remove(rectangle);
+            if (surface.Children.Contains(rectangle))
+                surface.Children.Remove(rectangle);
 
             System.Drawing.RectangleF drawingRectange = RichEditHelper.GetRectangleFromDocumentPosition(richEditControl1, pos);
 
@@ -109,11 +112,12 @@ namespace ListBoxDragAndDrop {
                 Height = drawingRectange.Height
             };
 
-            canvas.Children.Add(rectangle);
+            surface.Children.Add(rectangle);
 
             Canvas.SetLeft(rectangle, drawingRectange.X);
             Canvas.SetTop(rectangle, drawingRectange.Y);
         }
         #endregion
+
     }
 }
