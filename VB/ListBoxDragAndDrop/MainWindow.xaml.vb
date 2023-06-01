@@ -1,4 +1,3 @@
-Imports Microsoft.VisualBasic
 Imports System
 Imports System.Collections.Generic
 Imports System.Linq
@@ -19,99 +18,83 @@ Imports DevExpress.Office.Utils
 Imports DevExpress.XtraRichEdit.API.Native
 
 Namespace ListBoxDragAndDrop
-	Partial Public Class MainWindow
-		Inherits Window
 
-		Private isDragStarted As Boolean
-		Private rectangle As Rectangle
+    Public Partial Class MainWindow
+        Inherits System.Windows.Window
 
-		Public Sub New()
-			InitializeComponent()
-		End Sub
+        Private isDragStarted As Boolean
 
-		Private Sub MainWindow_Loaded(ByVal sender As Object, ByVal e As RoutedEventArgs)
-			richEditControl1.Views.SimpleView.Padding = New System.Windows.Forms.Padding(0)
-			listBoxEdit1.ItemsSource = DataHelper.GenerateCustomers()
-		End Sub
+        Private rectangle As System.Windows.Shapes.Rectangle
 
-		#Region "ListBoxDrag"
-		Private Sub list_PreviewMouseMove(ByVal sender As Object, ByVal e As MouseEventArgs)
-			If e.LeftButton = MouseButtonState.Pressed Then
-				If isDragStarted Then
-					Dim listBoxEdit As ListBoxEdit = CType(sender, ListBoxEdit)
-					Dim item As Customer = CType(listBoxEdit.SelectedItem, Customer)
+        Public Sub New()
+            Me.InitializeComponent()
+        End Sub
 
-					If item IsNot Nothing Then
-						Dim data As DataObject = CreateDataObject(item)
-						data.SetData("dragSource", listBoxEdit)
-						DragDrop.DoDragDrop(listBoxEdit, data, DragDropEffects.Copy)
-						isDragStarted = False
-					End If
-				End If
-			End If
-		End Sub
+        Private Sub MainWindow_Loaded(ByVal sender As Object, ByVal e As System.Windows.RoutedEventArgs)
+            Me.richEditControl1.Views.SimpleView.Padding = New System.Windows.Forms.Padding(0)
+            Me.listBoxEdit1.ItemsSource = ListBoxDragAndDrop.DataHelper.GenerateCustomers()
+        End Sub
 
-		Private Sub list_MouseLeftButtonDown(ByVal sender As Object, ByVal e As MouseButtonEventArgs)
-			Dim listBoxEdit As ListBoxEdit = CType(sender, ListBoxEdit)
-			Dim hitObject As DependencyObject = TryCast(listBoxEdit.InputHitTest(e.GetPosition(listBoxEdit)), DependencyObject)
-			Dim hitItem As FrameworkElement = LayoutHelper.FindParentObject(Of ListBoxEditItem)(hitObject)
+'#Region "ListBoxDrag"
+        Private Sub list_PreviewMouseMove(ByVal sender As Object, ByVal e As System.Windows.Input.MouseEventArgs)
+            If e.LeftButton = System.Windows.Input.MouseButtonState.Pressed Then
+                If Me.isDragStarted Then
+                    Dim listBoxEdit As DevExpress.Xpf.Editors.ListBoxEdit = CType(sender, DevExpress.Xpf.Editors.ListBoxEdit)
+                    Dim item As ListBoxDragAndDrop.Customer = CType(listBoxEdit.SelectedItem, ListBoxDragAndDrop.Customer)
+                    If item IsNot Nothing Then
+                        Dim data As System.Windows.DataObject = Me.CreateDataObject(item)
+                        data.SetData("dragSource", listBoxEdit)
+                        Call System.Windows.DragDrop.DoDragDrop(listBoxEdit, data, System.Windows.DragDropEffects.Copy)
+                        Me.isDragStarted = False
+                    End If
+                End If
+            End If
+        End Sub
 
-			If hitItem IsNot Nothing Then
-				isDragStarted = True
-			End If
-		End Sub
+        Private Sub list_MouseLeftButtonDown(ByVal sender As Object, ByVal e As System.Windows.Input.MouseButtonEventArgs)
+            Dim listBoxEdit As DevExpress.Xpf.Editors.ListBoxEdit = CType(sender, DevExpress.Xpf.Editors.ListBoxEdit)
+            Dim hitObject As System.Windows.DependencyObject = TryCast(listBoxEdit.InputHitTest(e.GetPosition(listBoxEdit)), System.Windows.DependencyObject)
+            Dim hitItem As System.Windows.FrameworkElement = DevExpress.Xpf.Core.Native.LayoutHelper.FindParentObject(Of DevExpress.Xpf.Editors.ListBoxEditItem)(hitObject)
+            If hitItem IsNot Nothing Then
+                Me.isDragStarted = True
+            End If
+        End Sub
 
-		Private Function CreateDataObject(ByVal item As Customer) As DataObject
-			Dim data As New DataObject()
-			data.SetData(GetType(Customer), item)
-			Return data
-		End Function
-		#End Region
+        Private Function CreateDataObject(ByVal item As ListBoxDragAndDrop.Customer) As DataObject
+            Dim data As System.Windows.DataObject = New System.Windows.DataObject()
+            data.SetData(GetType(ListBoxDragAndDrop.Customer), item)
+            Return data
+        End Function
 
+'#End Region
+'#Region "RichEditDrop"
+        Private Sub richEditControl1_PreviewDragEnter(ByVal sender As Object, ByVal e As System.Windows.DragEventArgs)
+            If e.Data.GetDataPresent(System.Windows.DataFormats.StringFormat) Then e.Effects = System.Windows.DragDropEffects.Copy
+        End Sub
 
-		#Region "RichEditDrop"
-		Private Sub richEditControl1_PreviewDragEnter(ByVal sender As Object, ByVal e As DragEventArgs)
-			If e.Data.GetDataPresent(DataFormats.StringFormat) Then
-				e.Effects = DragDropEffects.Copy
-			End If
-		End Sub
+        Private Sub richEditControl1_PreviewDragOver(ByVal sender As Object, ByVal e As System.Windows.DragEventArgs)
+            Dim windowsPoint As System.Windows.Point = e.GetPosition(CType(Me.richEditControl1, System.Windows.UIElement))
+            Dim pos As DevExpress.XtraRichEdit.API.Native.DocumentPosition = ListBoxDragAndDrop.RichEditHelper.GetDocumentPositionFromWindowsPoint(Me.richEditControl1, windowsPoint)
+            If pos Is Nothing Then Return
+            Me.DrawRectange(pos)
+            Me.richEditControl1.Document.CaretPosition = pos
+            Me.richEditControl1.ScrollToCaret()
+        End Sub
 
-		Private Sub richEditControl1_PreviewDragOver(ByVal sender As Object, ByVal e As DragEventArgs)
-			Dim windowsPoint As Point = e.GetPosition(CType(richEditControl1, UIElement))
-			Dim pos As DocumentPosition = RichEditHelper.GetDocumentPositionFromWindowsPoint(richEditControl1, windowsPoint)
+        Private Sub richEditControl1_PreviewDrop(ByVal sender As Object, ByVal e As System.Windows.DragEventArgs)
+            Dim item As ListBoxDragAndDrop.Customer = CType(e.Data.GetData(GetType(ListBoxDragAndDrop.Customer)), ListBoxDragAndDrop.Customer)
+            Me.richEditControl1.Document.InsertText(Me.richEditControl1.Document.CaretPosition, item.FirstName & " " & item.LastName)
+            Me.canvas.Children.Remove(Me.rectangle)
+        End Sub
 
-			If pos Is Nothing Then
-				Return
-			End If
-
-			DrawRectange(pos)
-
-			richEditControl1.Document.CaretPosition = pos
-			richEditControl1.ScrollToCaret()
-		End Sub
-
-		Private Sub richEditControl1_PreviewDrop(ByVal sender As Object, ByVal e As DragEventArgs)
-			Dim item As Customer = CType(e.Data.GetData(GetType(Customer)), Customer)
-
-			richEditControl1.Document.InsertText(richEditControl1.Document.CaretPosition, item.FirstName & " " & item.LastName)
-
-			canvas.Children.Remove(rectangle)
-		End Sub
-
-		Public Sub DrawRectange(ByVal pos As DocumentPosition)
-			If canvas.Children.Contains(rectangle) Then
-				canvas.Children.Remove(rectangle)
-			End If
-
-			Dim drawingRectange As System.Drawing.RectangleF = RichEditHelper.GetRectangleFromDocumentPosition(richEditControl1, pos)
-
-			rectangle = New Rectangle() With {.Stroke = Brushes.Blue, .StrokeThickness = 1, .Width = 2, .Height = drawingRectange.Height}
-
-			canvas.Children.Add(rectangle)
-
-			Canvas.SetLeft(rectangle, drawingRectange.X)
-			Canvas.SetTop(rectangle, drawingRectange.Y)
-		End Sub
-		#End Region
-	End Class
+        Public Sub DrawRectange(ByVal pos As DevExpress.XtraRichEdit.API.Native.DocumentPosition)
+            If Me.canvas.Children.Contains(Me.rectangle) Then Me.canvas.Children.Remove(Me.rectangle)
+            Dim drawingRectange As System.Drawing.RectangleF = ListBoxDragAndDrop.RichEditHelper.GetRectangleFromDocumentPosition(Me.richEditControl1, pos)
+            Me.rectangle = New System.Windows.Shapes.Rectangle() With {.Stroke = System.Windows.Media.Brushes.Blue, .StrokeThickness = 1, .Width = 2, .Height = drawingRectange.Height}
+            Me.canvas.Children.Add(Me.rectangle)
+            Call System.Windows.Controls.Canvas.SetLeft(Me.rectangle, drawingRectange.X)
+            Call System.Windows.Controls.Canvas.SetTop(Me.rectangle, drawingRectange.Y)
+        End Sub
+'#End Region
+    End Class
 End Namespace
