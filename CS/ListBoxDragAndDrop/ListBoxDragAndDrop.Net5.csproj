@@ -1,12 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ListBoxDragAndDrop</RootNamespace>
     <AssemblyName>ListBoxDragAndDrop</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
+        <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <Platforms>x86;AnyCPU</Platforms>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
@@ -16,22 +15,22 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.Data" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Data.Desktop" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Document.Processor" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Images" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Mvvm" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Office.Core" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Pdf.Core" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Printing.Core" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.RichEdit.Core" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.RichEdit.Export" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Core" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Office" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Printing" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Reporting" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Ribbon" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.RichEdit" Version="22.1.*-*" />
-    <PackageReference Include="DevExpress.Wpf.Themes.All" Version="22.1.*-*" />
+    <PackageReference Include="DevExpress.Data" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Data.Desktop" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Document.Processor" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Images" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Mvvm" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Office.Core" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Pdf.Core" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Printing.Core" Version="22.1.9" />
+    <PackageReference Include="DevExpress.RichEdit.Core" Version="22.1.9" />
+    <PackageReference Include="DevExpress.RichEdit.Export" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Core" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Office" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Printing" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Reporting" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Ribbon" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.RichEdit" Version="22.1.9" />
+    <PackageReference Include="DevExpress.Wpf.Themes.All" Version="22.1.9" />
   </ItemGroup>
 </Project>
