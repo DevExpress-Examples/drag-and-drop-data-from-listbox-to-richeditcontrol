@@ -1,4 +1,4 @@
-﻿Imports System
+Imports System
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Text
@@ -19,104 +19,89 @@ Imports DevExpress.XtraRichEdit.API.Native
 Imports DevExpress.Portable
 
 Namespace ListBoxDragAndDrop
-	Partial Public Class MainWindow
-		Inherits Window
 
-		Private isDragStarted As Boolean
-		Private rectangle As Rectangle
+    Public Partial Class MainWindow
+        Inherits Window
 
-		Public Sub New()
-			InitializeComponent()
-		End Sub
+        Private isDragStarted As Boolean
 
-		Private Sub MainWindow_Loaded(ByVal sender As Object, ByVal e As RoutedEventArgs)
-			richEditControl1.Views.SimpleView.Padding = New PortablePadding(0)
-			listBoxEdit1.ItemsSource = DataHelper.GenerateCustomers()
-		End Sub
+        Private rectangle As Rectangle
 
-		#Region "ListBoxDrag"
-		Private Sub list_PreviewMouseMove(ByVal sender As Object, ByVal e As MouseEventArgs)
-			If e.LeftButton = MouseButtonState.Pressed Then
-				If isDragStarted Then
-					Dim listBoxEdit As ListBoxEdit = DirectCast(sender, ListBoxEdit)
-					Dim item As Customer = CType(listBoxEdit.SelectedItem, Customer)
+        Private surface As Canvas = Nothing
 
-					If item IsNot Nothing Then
-						Dim data As DataObject = CreateDataObject(item)
-						data.SetData("dragSource", listBoxEdit)
-						DragDrop.DoDragDrop(listBoxEdit, data, DragDropEffects.Copy)
-						isDragStarted = False
-					End If
-				End If
-			End If
-		End Sub
+        Public Sub New()
+            InitializeComponent()
+        End Sub
 
-		Private Sub list_MouseLeftButtonDown(ByVal sender As Object, ByVal e As MouseButtonEventArgs)
-			Dim listBoxEdit As ListBoxEdit = DirectCast(sender, ListBoxEdit)
-			Dim hitObject As DependencyObject = TryCast(listBoxEdit.InputHitTest(e.GetPosition(listBoxEdit)), DependencyObject)
-			Dim hitItem As FrameworkElement = LayoutHelper.FindParentObject(Of ListBoxEditItem)(hitObject)
+        Private Sub richEditControl1_Loaded(ByVal sender As Object, ByVal e As RoutedEventArgs)
+            Me.surface = TryCast(richEditControl1.Template.FindName("Surface", richEditControl1), Canvas)
+        End Sub
 
-			If hitItem IsNot Nothing Then
-				isDragStarted = True
-			End If
-		End Sub
+        Private Sub MainWindow_Loaded(ByVal sender As Object, ByVal e As RoutedEventArgs)
+            richEditControl1.Views.SimpleView.Padding = New DevExpress.Portable.PortablePadding(0)
+            listBoxEdit1.ItemsSource = ListBoxDragAndDrop.DataHelper.GenerateCustomers()
+        End Sub
 
-		Private Function CreateDataObject(ByVal item As Customer) As DataObject
-			Dim data As New DataObject()
-			data.SetData(GetType(Customer), item)
-			Return data
-		End Function
-		#End Region
+#Region "ListBoxDrag"
+        Private Sub list_PreviewMouseMove(ByVal sender As Object, ByVal e As MouseEventArgs)
+            If e.LeftButton Is MouseButtonState.Pressed Then
+                If Me.isDragStarted Then
+                    Dim listBoxEdit As DevExpress.Xpf.Editors.ListBoxEdit = CType(sender, DevExpress.Xpf.Editors.ListBoxEdit)
+                    Dim item As ListBoxDragAndDrop.Customer = CType(listBoxEdit.SelectedItem, ListBoxDragAndDrop.Customer)
+                    If item IsNot Nothing Then
+                        Dim data As DataObject = Me.CreateDataObject(item)
+                        data.SetData("dragSource", listBoxEdit)
+                        DragDrop.DoDragDrop(listBoxEdit, data, DragDropEffects.Copy)
+                        Me.isDragStarted = False
+                    End If
+                End If
+            End If
+        End Sub
 
+        Private Sub list_MouseLeftButtonDown(ByVal sender As Object, ByVal e As MouseButtonEventArgs)
+            Dim listBoxEdit As DevExpress.Xpf.Editors.ListBoxEdit = CType(sender, DevExpress.Xpf.Editors.ListBoxEdit)
+            Dim hitObject As DependencyObject = TryCast(listBoxEdit.InputHitTest(e.GetPosition(listBoxEdit)), DependencyObject)
+            Dim hitItem As FrameworkElement = DevExpress.Xpf.Core.Native.LayoutHelper.FindParentObject(Of DevExpress.Xpf.Editors.ListBoxEditItem)(hitObject)
+            If hitItem IsNot Nothing Then
+                Me.isDragStarted = True
+            End If
+        End Sub
 
-		#Region "RichEditDrop"
-		Private Sub richEditControl1_PreviewDragEnter(ByVal sender As Object, ByVal e As DragEventArgs)
-			If e.Data.GetDataPresent(DataFormats.StringFormat) Then
-				e.Effects = DragDropEffects.Copy
-			End If
-		End Sub
+        Private Function CreateDataObject(ByVal item As ListBoxDragAndDrop.Customer) As DataObject
+            Dim data As DataObject = New DataObject()
+            data.SetData(GetType(ListBoxDragAndDrop.Customer), item)
+            Return data
+        End Function
 
-		Private Sub richEditControl1_PreviewDragOver(ByVal sender As Object, ByVal e As DragEventArgs)
-			Dim windowsPoint As Point = e.GetPosition(CType(richEditControl1, UIElement))
-			Dim pos As DocumentPosition = RichEditHelper.GetDocumentPositionFromWindowsPoint(richEditControl1, windowsPoint)
+#End Region
+#Region "RichEditDrop"
+        Private Sub richEditControl1_PreviewDragEnter(ByVal sender As Object, ByVal e As DragEventArgs)
+            If e.Data.GetDataPresent(DataFormats.StringFormat) Then e.Effects = DragDropEffects.Copy
+        End Sub
 
-			If pos Is Nothing Then
-				Return
-			End If
+        Private Sub richEditControl1_PreviewDragOver(ByVal sender As Object, ByVal e As DragEventArgs)
+            Dim windowsPoint As Point = e.GetPosition(CType(richEditControl1, UIElement))
+            Dim pos As DevExpress.XtraRichEdit.API.Native.DocumentPosition = ListBoxDragAndDrop.RichEditHelper.GetDocumentPositionFromWindowsPoint(richEditControl1, windowsPoint)
+            If pos Is Nothing Then Return
+            Me.DrawRectange(pos)
+            richEditControl1.Document.CaretPosition = pos
+            richEditControl1.ScrollToCaret()
+        End Sub
 
-			DrawRectange(pos)
+        Private Sub richEditControl1_PreviewDrop(ByVal sender As Object, ByVal e As DragEventArgs)
+            Dim item As ListBoxDragAndDrop.Customer = CType(e.Data.GetData(GetType(ListBoxDragAndDrop.Customer)), ListBoxDragAndDrop.Customer)
+            richEditControl1.Document.InsertText(richEditControl1.Document.CaretPosition, item.FirstName & " " & item.LastName)
+            Me.surface.Children.Remove(Me.rectangle)
+        End Sub
 
-			richEditControl1.Document.CaretPosition = pos
-			richEditControl1.ScrollToCaret()
-		End Sub
-
-		Private Sub richEditControl1_PreviewDrop(ByVal sender As Object, ByVal e As DragEventArgs)
-			Dim item As Customer = DirectCast(e.Data.GetData(GetType(Customer)), Customer)
-
-			richEditControl1.Document.InsertText(richEditControl1.Document.CaretPosition, item.FirstName & " " & item.LastName)
-
-			canvas.Children.Remove(rectangle)
-		End Sub
-
-		Public Sub DrawRectange(ByVal pos As DocumentPosition)
-			If canvas.Children.Contains(rectangle) Then
-				canvas.Children.Remove(rectangle)
-			End If
-
-			Dim drawingRectange As System.Drawing.RectangleF = RichEditHelper.GetRectangleFromDocumentPosition(richEditControl1, pos)
-
-			rectangle = New Rectangle() With {
-				.Stroke = Brushes.Blue,
-				.StrokeThickness = 1,
-				.Width = 2,
-				.Height = drawingRectange.Height
-			}
-
-			canvas.Children.Add(rectangle)
-
-			Canvas.SetLeft(rectangle, drawingRectange.X)
-			Canvas.SetTop(rectangle, drawingRectange.Y)
-		End Sub
-		#End Region
-	End Class
+        Public Sub DrawRectange(ByVal pos As DevExpress.XtraRichEdit.API.Native.DocumentPosition)
+            If Me.surface.Children.Contains(Me.rectangle) Then Me.surface.Children.Remove(Me.rectangle)
+            Dim drawingRectange As System.Drawing.RectangleF = ListBoxDragAndDrop.RichEditHelper.GetRectangleFromDocumentPosition(richEditControl1, pos)
+            Me.rectangle = New Rectangle() With {.Stroke = Brushes.Blue, .StrokeThickness = 1, .Width = 2, .Height = drawingRectange.Height}
+            Me.surface.Children.Add(Me.rectangle)
+            Canvas.SetLeft(Me.rectangle, drawingRectange.X)
+            Canvas.SetTop(Me.rectangle, drawingRectange.Y)
+        End Sub
+#End Region
+    End Class
 End Namespace
